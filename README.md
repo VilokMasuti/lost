@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lost & Found Portal
+
+A comprehensive web application for reporting and finding lost items, built with Next.js 15, MongoDB, and Auth.js with Google OAuth.
+
+![Lost & Found Portal](https://placeholder.svg?height=400&width=800&text=Lost+%26+Found+Portal)
+
+## Features
+
+- **User Authentication**
+  - Google OAuth integration
+  - User roles (regular users and administrators)
+
+- **Item Management**
+  - Report lost items with detailed descriptions
+  - Report found items with detailed descriptions
+  - Browse lost and found items with filtering options
+  - View detailed information about items
+  - Track your own reported items
+
+- **Matching System**
+  - Automatic matching of lost and found items based on descriptions
+  - View potential matches for your items
+  - Contact item reporters through provided contact information
+
+- **Admin Dashboard**
+  - Manage all reported items
+  - Remove spam or inappropriate content
+  - Resolve matched items
+  - View statistics about the platform
+
+- **Responsive Design**
+  - Works on mobile, tablet, and desktop devices
+  - Clean and modern UI using shadcn/ui components
+
+## Tech Stack
+
+- **Frontend**
+  - Next.js 15 (App Router)
+  - React
+  - Tailwind CSS
+  - shadcn/ui components
+  - Sonner for toast notifications
+
+- **Backend**
+  - Next.js API Routes
+  - MongoDB with Mongoose ODM
+  - Auth.js v5 for authentication
+
+- **Authentication**
+  - Google OAuth
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18.17 or later
+- MongoDB database (local or Atlas)
+- Google OAuth credentials (for authentication)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file in the root directory with the following variables:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# MongoDB
+MONGODB_URI=your_mongodb_connection_string
 
-## Learn More
+# NextAuth
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
 
-To learn more about Next.js, take a look at the following resources:
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
