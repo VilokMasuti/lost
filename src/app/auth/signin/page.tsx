@@ -32,32 +32,34 @@ export default function SignIn() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-// Update your handleSubmit function
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
+  // Update your handleSubmit function
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  try {
-    const result = await signIn('credentials', {
-      redirect: false,
-      email: formData.email,
-      password: formData.password,
-      callbackUrl: '/'
-    });
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+        callbackUrl: '/',
+      });
 
-    if (result?.error) {
-      throw new Error(result.error);
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      if (result?.url) {
+        router.push(result.url);
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Authentication failed'
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    if (result?.url) {
-      router.push(result.url);
-    }
-  } catch (error) {
-    toast.error(error instanceof Error ? error.message : 'Authentication failed');
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12">
@@ -86,7 +88,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
                 <Link
-                  href="/auth/forgot-password"
+                  href="/auth/signin"
                   className="text-sm text-primary hover:underline"
                 >
                   Forgot password?
@@ -102,7 +104,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 mt-2">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
