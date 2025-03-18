@@ -1,19 +1,14 @@
 "use client"
 
-import { useEffect } from 'react'
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from '@/components/ui/button'
 
-export default function AuthErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
-
-  useEffect(() => {
-    // Log the error to your error tracking service
-    if (error) console.error('Authentication Error:', error)
-  }, [error])
 
   return (
     <div className="container flex h-screen flex-col items-center justify-center">
@@ -37,3 +32,25 @@ export default function AuthErrorPage() {
   )
 }
 
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading error information...</div>}>
+      <ErrorContent />
+    </Suspense>
+  )
+}
+
+// Static generation config
+export const dynamic = 'force-static'
+
+export async function generateStaticParams() {
+  return [
+    { error: 'Configuration' },
+    { error: 'AccessDenied' },
+    { error: 'Verification' },
+    { error: 'OAuthSignin' },
+    { error: 'OAuthCallback' },
+    { error: 'OAuthCreateAccount' },
+    { error: 'Default' }
+  ].map((e) => ({ error: [e.error] }))
+}
