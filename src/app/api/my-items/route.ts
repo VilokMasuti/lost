@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server"
-import { auth } from "@/auth"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/auth"
 import dbConnect from "@/lib/mongodb"
 import LostItem from "@/models/lost-item"
 import FoundItem from "@/models/found-item"
 
 export async function GET(req: Request) {
   try {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

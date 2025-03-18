@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogOut, Menu } from "lucide-react"
+import { LogOut, Menu, User, Package } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
 
@@ -31,12 +31,12 @@ export function Navbar() {
     {
       href: "/lost-items",
       label: "Lost Items",
-      active: pathname === "/lost-items",
+      active: pathname === "/lost-items" || pathname.startsWith("/lost-items/"),
     },
     {
       href: "/found-items",
       label: "Found Items",
-      active: pathname === "/found-items",
+      active: pathname === "/found-items" || pathname.startsWith("/found-items/"),
     },
     {
       href: "/report-lost",
@@ -53,13 +53,29 @@ export function Navbar() {
   const adminRoutes = [
     {
       href: "/admin",
-      label: "Dashboard",
+      label: "Admin Dashboard",
       active: pathname === "/admin",
+      icon: <User className="h-4 w-4 mr-2" />,
+    },
+  ]
+
+  const userRoutes = [
+    {
+      href: "/profile",
+      label: "Profile",
+      active: pathname === "/profile",
+      icon: <User className="h-4 w-4 mr-2" />,
+    },
+    {
+      href: "/my-items",
+      label: "My Items",
+      active: pathname === "/my-items",
+      icon: <Package className="h-4 w-4 mr-2" />,
     },
   ]
 
   return (
-    <header className="border-b">
+    <header className="border-b sticky top-0 z-50 bg-background">
       <div className="flex h-16 items-center px-4 md:px-6">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
@@ -82,19 +98,42 @@ export function Navbar() {
                   {route.label}
                 </Link>
               ))}
-              {session?.user?.role === "admin" &&
-                adminRoutes.map((route) => (
-                  <Link
-                    key={route.href}
-                    href={route.href}
-                    className={`text-sm font-medium transition-colors hover:text-primary ${
-                      route.active ? "text-black dark:text-white" : "text-muted-foreground"
-                    }`}
-                    onClick={() => setOpen(false)}
-                  >
-                    {route.label}
-                  </Link>
-                ))}
+
+              {session && (
+                <>
+                  <div className="h-px bg-border my-2" />
+                  {userRoutes.map((route) => (
+                    <Link
+                      key={route.href}
+                      href={route.href}
+                      className={`text-sm font-medium transition-colors hover:text-primary ${
+                        route.active ? "text-black dark:text-white" : "text-muted-foreground"
+                      }`}
+                      onClick={() => setOpen(false)}
+                    >
+                      {route.label}
+                    </Link>
+                  ))}
+                </>
+              )}
+
+              {session?.user?.role === "admin" && (
+                <>
+                  <div className="h-px bg-border my-2" />
+                  {adminRoutes.map((route) => (
+                    <Link
+                      key={route.href}
+                      href={route.href}
+                      className={`text-sm font-medium transition-colors hover:text-primary ${
+                        route.active ? "text-black dark:text-white" : "text-muted-foreground"
+                      }`}
+                      onClick={() => setOpen(false)}
+                    >
+                      {route.label}
+                    </Link>
+                  ))}
+                </>
+              )}
             </nav>
           </SheetContent>
         </Sheet>
@@ -113,18 +152,6 @@ export function Navbar() {
               {route.label}
             </Link>
           ))}
-          {session?.user?.role === "admin" &&
-            adminRoutes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                className={`transition-colors hover:text-primary ${
-                  route.active ? "text-black dark:text-white" : "text-muted-foreground"
-                }`}
-              >
-                {route.label}
-              </Link>
-            ))}
         </nav>
         <div className="ml-auto flex items-center space-x-4">
           {session ? (
@@ -141,18 +168,31 @@ export function Navbar() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href="/profile" className="w-full">
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/my-items" className="w-full">
-                    My Items
-                  </Link>
-                </DropdownMenuItem>
+                {userRoutes.map((route) => (
+                  <DropdownMenuItem key={route.href} asChild>
+                    <Link href={route.href} className="w-full flex items-center">
+                      {route.icon}
+                      {route.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+
+                {session.user.role === "admin" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    {adminRoutes.map((route) => (
+                      <DropdownMenuItem key={route.href} asChild>
+                        <Link href={route.href} className="w-full flex items-center">
+                          {route.icon}
+                          {route.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </>
+                )}
+
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

@@ -1,88 +1,75 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-'use client';
+"use client"
 
-import { ItemCard } from '@/components/ItemCard';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { FoundItem, LostItem } from '@/types/index';
-import { format } from 'date-fns';
-import { ArrowLeft, Calendar, MapPin, Phone, User } from 'lucide-react';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { ItemCard } from "@/components/ItemCard"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { FoundItem, LostItem } from "@/types/index"
+import { format } from "date-fns"
+import { ArrowLeft, Calendar, MapPin, Phone, User } from "lucide-react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 export default function LostItemDetail() {
-  const params = useParams();
-  const router = useRouter();
-  const { data: session } = useSession();
-  const [item, setItem] = useState<LostItem | null>(null);
-  const [matches, setMatches] = useState<FoundItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMatches, setIsLoadingMatches] = useState(false);
+  const params = useParams()
+  const router = useRouter()
+  const { data: session } = useSession()
+  const [item, setItem] = useState<LostItem | null>(null)
+  const [matches, setMatches] = useState<FoundItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMatches, setIsLoadingMatches] = useState(false)
 
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await fetch(`/api/lost-items/${params.id}`);
+        const response = await fetch(`/api/lost-items/${params.id}`)
 
         if (!response.ok) {
-          throw new Error('Failed to fetch item details');
+          throw new Error("Failed to fetch item details")
         }
 
-        const data = await response.json();
-        setItem(data.data);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const data = await response.json()
+        setItem(data.data)
       } catch (error) {
-        toast.error('Failed to load item details');
-        router.push('/lost-items');
+        toast.error("Failed to load item details")
+        router.push("/lost-items")
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchItem();
-  }, [params.id, router]);
+    fetchItem()
+  }, [params.id, router])
 
   const fetchMatches = async () => {
-    if (!item) return;
+    if (!item) return
 
-    setIsLoadingMatches(true);
+    setIsLoadingMatches(true)
     try {
-      const response = await fetch(
-        `/api/match-items?itemId=${item._id}&itemType=lost`
-      );
+      const response = await fetch(`/api/match-items?itemId=${item._id}&itemType=lost`)
 
       if (!response.ok) {
-        throw new Error('Failed to fetch potential matches');
+        throw new Error("Failed to fetch potential matches")
       }
 
-      const data = await response.json();
-      setMatches(data.data);
+      const data = await response.json()
+      setMatches(data.data)
     } catch (error) {
-      toast.error('Failed to load potential matches');
+      toast.error("Failed to load potential matches")
     } finally {
-      setIsLoadingMatches(false);
+      setIsLoadingMatches(false)
     }
-  };
+  }
 
   const statusColor = {
-    pending:
-      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-    matched: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    resolved:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  };
+    pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+    matched: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    resolved: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  }
 
   if (isLoading) {
     return (
@@ -91,7 +78,7 @@ export default function LostItemDetail() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (!item) {
@@ -100,15 +87,14 @@ export default function LostItemDetail() {
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <h2 className="text-xl font-semibold mb-2">Item not found</h2>
           <p className="text-muted-foreground mb-6">
-            The item you&apos;re looking for doesn&apos;t exist or has been
-            removed
+            The item you&apos;re looking for doesn&apos;t exist or has been removed
           </p>
           <Button asChild>
             <Link href="/lost-items">Back to Lost Items</Link>
           </Button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -138,13 +124,13 @@ export default function LostItemDetail() {
               {item.imageUrl && (
                 <div className="aspect-video w-full overflow-hidden rounded-md">
                   <img
-                    src={item.imageUrl || '/placeholder.svg'}
+                    src={item.imageUrl || "/placeholder.svg"}
                     alt={item.name}
                     className="h-full w-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src = `/placeholder.svg?height=300&width=600&text=${encodeURIComponent(
-                        item.name
-                      )}`;
+                        item.name,
+                      )}`
                     }}
                   />
                 </div>
@@ -158,7 +144,7 @@ export default function LostItemDetail() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
-                  <span>Lost on: {format(new Date(item.dateLost), 'PPP')}</span>
+                  <span>Lost on: {format(new Date(item.dateLost), "PPP")}</span>
                 </div>
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 mr-2 text-muted-foreground" />
@@ -183,21 +169,14 @@ export default function LostItemDetail() {
               ) : matches.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {matches.map((foundItem) => (
-                    <ItemCard
-                      key={foundItem._id}
-                      item={foundItem}
-                      type="found"
-                    />
+                    <ItemCard key={foundItem._id} item={foundItem} type="found" />
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <h3 className="text-lg font-semibold mb-2">
-                    No matches found yet
-                  </h3>
+                  <h3 className="text-lg font-semibold mb-2">No matches found yet</h3>
                   <p className="text-muted-foreground">
-                    We&apos;ll keep looking for potential matches for your lost
-                    item
+                    We&apos;ll keep looking for potential matches for your lost item
                   </p>
                 </div>
               )}
@@ -214,8 +193,7 @@ export default function LostItemDetail() {
                 </div>
                 <div className="mt-4 pt-4 border-t">
                   <p className="text-sm text-muted-foreground">
-                    Please contact the person who reported this item if you have
-                    any information about it.
+                    Please contact the person who reported this item if you have any information about it.
                   </p>
                 </div>
               </div>
@@ -228,14 +206,12 @@ export default function LostItemDetail() {
             <CardHeader>
               <CardTitle>Have you found this item?</CardTitle>
               <CardDescription>
-                If you&apos;ve found an item matching this description, please
-                report it.
+                If you&apos;ve found an item matching this description, please report it.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Reporting a found item helps connect lost items with their
-                owners.
+                Reporting a found item helps connect lost items with their owners.
               </p>
             </CardContent>
             <CardFooter>
@@ -247,5 +223,6 @@ export default function LostItemDetail() {
         </div>
       </div>
     </div>
-  );
+  )
 }
+

@@ -1,75 +1,51 @@
-import dbConnect from '@/lib/mongodb';
-import clientPromise from '@/lib/mongodb-adapter';
-import User from '@/models/users';
-import { MongoDBAdapter } from '@auth/mongodb-adapter';
-import type { DefaultSession } from 'next-auth';
-import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
+import type { NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import dbConnect from "@/lib/mongodb"
+import User from "@/models/users"
+import { compare } from "bcryptjs"
 
-// Extend the built-in session types
-declare module 'next-auth' {
-  interface Session {
-    user: {
-      id: string;
-      role: string;
-    } & DefaultSession['user'];
-  }
-
-  interface User {
-    role?: string;
-  }
-}
-
-// Extend the JWT type
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id?: string;
-    role?: string;
-  }
-}
-
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
-  adapter: MongoDBAdapter(clientPromise),
+export const authOptions: NextAuthOptions = {
+  
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials")
+        }
+
+        await dbConnect()
+
+        const user = await User.findOne({ email: credentials.email }).select("+password")
+
+        if (!user) {
+          throw new Error("No user found with this email")
+        }
+
+        const isPasswordValid = await compare(credentials.password, user.password)
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid password")
+        }
+
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        }
+      },
     }),
   ],
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async jwt({ token, user, account, profile }) {
-      // Initial sign in
-      if (account && user) {
-        await dbConnect();
-
-        // Check if user exists
-        const existingUser = await User.findOne({ email: user.email });
-
-        if (existingUser) {
-          // User exists, update token
-          token.id = existingUser._id.toString();
-          token.role = existingUser.role;
-        } else {
-          // Create new user
-          const newUser = await User.create({
-            name: user.name,
-            email: user.email,
-            // Set a secure random password for OAuth users (not used for login)
-            password:
-              Math.random().toString(36).slice(-8) +
-              Math.random().toString(36).slice(-8),
-            role: 'user',
-          });
-
-          token.id = newUser._id.toString();
-          token.role = newUser.role;
-        }
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
@@ -81,12 +57,13 @@ export const {
       return session;
     },
   },
+
   pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error',
+    signIn: "/auth/signin",
+    error: "/auth/error", // This should point to your custom error page
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+}

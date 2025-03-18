@@ -1,68 +1,49 @@
-import mongoose, { Schema, type Document } from 'mongoose';
+import mongoose from "mongoose"
 
-export interface IFoundItem extends Document {
-  userId: mongoose.Types.ObjectId;
-  name: string;
-  description: string;
-  category: string;
-  dateFound: Date;
-  location: string;
-  status: 'pending' | 'matched' | 'resolved';
-  contactInfo: string;
-  imageUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const FoundItemSchema = new Schema<IFoundItem>(
+const FoundItemSchema = new mongoose.Schema(
   {
     userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      type: String,
       required: true,
     },
     name: {
       type: String,
-      required: [true, 'Please provide an item name'],
-      maxlength: [100, 'Name cannot be more than 100 characters'],
+      required: true,
     },
     description: {
       type: String,
-      required: [true, 'Please provide a description'],
-      maxlength: [1000, 'Description cannot be more than 1000 characters'],
+      required: true,
     },
     category: {
       type: String,
-      required: [true, 'Please select a category'],
+      required: true,
     },
     dateFound: {
       type: Date,
-      required: [true, 'Please provide the date when the item was found'],
+      required: true,
     },
     location: {
       type: String,
-      required: [true, 'Please provide the location where the item was found'],
-    },
-    status: {
-      type: String,
-      enum: ['pending', 'matched', 'resolved'],
-      default: 'pending',
+      required: true,
     },
     contactInfo: {
       type: String,
-      required: [true, 'Please provide contact information'],
+      required: true,
     },
     imageUrl: {
       type: String,
     },
+    status: {
+      type: String,
+      enum: ["pending", "matched", "resolved"],
+      default: "pending",
+    },
   },
-  {
-    timestamps: true,
-  }
-);
+  { timestamps: true },
+)
 
 // Add text index for search functionality
-FoundItemSchema.index({ name: 'text', description: 'text', location: 'text' });
+FoundItemSchema.index({ name: "text", description: "text", location: "text" })
 
-export default mongoose.models.FoundItem ||
-  mongoose.model<IFoundItem>('FoundItem', FoundItemSchema);
+export default mongoose.models.FoundItem || mongoose.model("FoundItem", FoundItemSchema)
+

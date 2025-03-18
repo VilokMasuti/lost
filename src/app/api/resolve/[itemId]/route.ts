@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server"
-import { auth } from "@/auth"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/auth"
 import dbConnect from "@/lib/mongodb"
 import LostItem from "@/models/lost-item"
 import FoundItem from "@/models/found-item"
 
 export async function PUT(req: Request, { params }: { params: { itemId: string } }) {
   try {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    if (session.user.role !== "admin") {
-      return NextResponse.json({ error: "Only admins can resolve items" }, { status: 403 })
     }
 
     const { itemId } = params
@@ -27,6 +24,11 @@ export async function PUT(req: Request, { params }: { params: { itemId: string }
       const lostItem = await LostItem.findById(itemId)
       if (!lostItem) {
         return NextResponse.json({ error: "Lost item not found" }, { status: 404 })
+      }
+
+      // Check if user is admin or the owner of the item
+      if (session.user.role !== "admin" && lostItem.userId !== session.user.id) {
+        return NextResponse.json({ error: "You can only resolve your own items" }, { status: 403 })
       }
 
       const foundItem = await FoundItem.findById(matchedItemId)
@@ -43,6 +45,11 @@ export async function PUT(req: Request, { params }: { params: { itemId: string }
       const foundItem = await FoundItem.findById(itemId)
       if (!foundItem) {
         return NextResponse.json({ error: "Found item not found" }, { status: 404 })
+      }
+
+      // Check if user is admin or the owner of the item
+      if (session.user.role !== "admin" && foundItem.userId !== session.user.id) {
+        return NextResponse.json({ error: "You can only resolve your own items" }, { status: 403 })
       }
 
       const lostItem = await LostItem.findById(matchedItemId)
@@ -64,3 +71,4 @@ export async function PUT(req: Request, { params }: { params: { itemId: string }
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
+
