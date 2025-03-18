@@ -1,9 +1,7 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { signOut, useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,64 +9,66 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogOut, Menu, User, Package } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useState } from "react"
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { LogOut, Menu, Package, User } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export function Navbar() {
-  const { data: session } = useSession()
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const { data: session } = useSession();
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   // Navigation routes configuration
   const routes = [
-    { href: "/", label: "Home", active: pathname === "/" },
+    { href: '/', label: 'Home', active: pathname === '/' },
     {
-      href: "/lost-items",
-      label: "Lost Items",
-      active: pathname.startsWith("/lost-items")
+      href: '/lost-items',
+      label: 'Lost Items',
+      active: pathname.startsWith('/lost-items'),
     },
     {
-      href: "/found-items",
-      label: "Found Items",
-      active: pathname.startsWith("/found-items")
+      href: '/found-items',
+      label: 'Found Items',
+      active: pathname.startsWith('/found-items'),
     },
     {
-      href: "/report-lost",
-      label: "Report Lost",
-      active: pathname === "/report-lost"
+      href: '/report-lost',
+      label: 'Report Lost',
+      active: pathname === '/report-lost',
     },
     {
-      href: "/report-found",
-      label: "Report Found",
-      active: pathname === "/report-found"
+      href: '/report-found',
+      label: 'Report Found',
+      active: pathname === '/report-found',
     },
-  ]
+  ];
 
   const userMenu = [
     {
-      href: "/profile",
-      label: "Profile",
-      icon: <User className="h-4 w-4 mr-2" />
+      href: '/profile',
+      label: 'Profile',
+      icon: <User className="h-4 w-4 mr-2" />,
     },
     {
-      href: "/my-items",
-      label: "My Items",
-      icon: <Package className="h-4 w-4 mr-2" />
+      href: '/my-items',
+      label: 'My Items',
+      icon: <Package className="h-4 w-4 mr-2" />,
     },
-  ]
+  ];
 
   const adminMenu = [
     {
-      href: "/admin",
-      label: "Admin",
-      icon: <User className="h-4 w-4 mr-2" />
-    }
-  ]
+      href: '/admin',
+      label: 'Admin',
+      icon: <User className="h-4 w-4 mr-2" />,
+    },
+  ];
 
-  const handleSignOut = () => signOut({ callbackUrl: "/" })
+  const handleSignOut = () => signOut({ callbackUrl: '/' });
 
   return (
     <header className="border-b sticky top-0 z-50 bg-background">
@@ -101,7 +101,9 @@ export function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <span className="text-xl">Lost & Found</span>
+          <span className="text-xl  bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/7d font-mono">
+            Lost & Found
+          </span>
         </Link>
 
         {/* Desktop navigation */}
@@ -125,15 +127,15 @@ export function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={session.user?.image || ""} />
+                  <AvatarImage src={session.user?.image || ''} />
                   <AvatarFallback>
-                    {session.user?.name?.[0]?.toUpperCase() || "U"}
+                    {session.user?.name?.[0]?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>
-                  {session.user?.name || "User"}
+                  {session.user?.name || 'User'}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
@@ -175,5 +177,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
