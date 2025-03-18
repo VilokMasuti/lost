@@ -106,7 +106,10 @@ export default function ReportLostItem() {
   };
 
   return (
-    <div className="container max-w-2xl py-10">
+    <div
+      className="container max-w-2xl py-10  sm:ml-[26%]
+    "
+    >
       <Card>
         <CardHeader>
           <CardTitle>Report a Lost Item</CardTitle>

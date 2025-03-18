@@ -11,7 +11,6 @@ import {
   ArrowRight,
   CheckCircle,
   Clock,
-  MapPin,
   Search,
   Share2,
   Upload,
@@ -70,10 +69,11 @@ export default function Home() {
                 amplitude={1.0}
                 speed={0.5}
               />
-              <div className="w-full h-full  flex items-center justify-center">
+              <div className="w-full h-full flex items-center justify-center">
                 <div className="relative animate-float">
-                  <div className="absolute -inset-px rounded-full bg-gradient-to-r from-primary/30 to-secondary/30 blur-lg"></div>
-                  <MapPin size={120} className=" text-black" />
+                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/7d mb-24">
+                    Our intelligent system manages your belongings
+                  </h1>
                 </div>
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12 mt-16">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-14 md:grid-cols-3 lg:gap-12 mt-16">
             {/* Card 1 */}
             <Card className="relative overflow-hidden border-0 bg-gradient-to-b from-background to-secondary/20 hover-lift animate-scale-in rounded-2xl shadow-md">
               <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-bl-full"></div>
@@ -158,12 +158,12 @@ export default function Home() {
       </section>
 
       {/* Browse Items Section */}
-      <section className="w-full py-20 md:py-28 lg:py-32 bg-gradient-to-b from-background to-secondary/50 relative">
+      <section className="w-full py-20 md:py-28 lg:py-32 relative bg-white shadow-2xl">
         <div className="absolute inset-0 bg-noise opacity-[0.03] pointer-events-none"></div>
         <div className="container px-4 md:px-6 relative z-10">
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 xl:grid-cols-2">
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 xl:grid-cols-2   ">
             {/* Lost Items */}
-            <div className="flex flex-col justify-center space-y-5 animate-slide-in delay-100">
+            <div className="flex flex-col justify-center space-y-5 animate-slide-in delay-100 sm:ml-[10%]">
               <div className="inline-flex items-center self-start px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-2">
                 <Clock className="mr-1 h-4 w-4" /> RECENTLY LOST
               </div>
@@ -190,7 +190,7 @@ export default function Home() {
             </div>
 
             {/* Found Items */}
-            <div className="flex flex-col justify-center space-y-5 animate-slide-in delay-200">
+            <div className="flex flex-col justify-center space-y-5 animate-slide-in delay-200 sm:ml-[10%]">
               <div className="inline-flex items-center self-start px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-2">
                 <Share2 className="mr-1 h-4 w-4" /> RECENTLY FOUND
               </div>

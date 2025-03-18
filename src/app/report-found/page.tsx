@@ -106,7 +106,7 @@ export default function ReportFoundItem() {
   };
 
   return (
-    <div className="container max-w-2xl py-10">
+    <div className="container max-w-2xl py-10 sm:ml-[26%]">
       <Card>
         <CardHeader>
           <CardTitle>Report a Found Item</CardTitle>
