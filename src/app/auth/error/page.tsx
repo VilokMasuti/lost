@@ -1,24 +1,39 @@
-"use client";
+"use client"
 
-import { useSearchParams } from "next/navigation";
+import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from '@/components/ui/button'
 
 export default function AuthErrorPage() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
+
+  useEffect(() => {
+    // Log the error to your error tracking service
+    if (error) console.error('Authentication Error:', error)
+  }, [error])
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-6 bg-white shadow-md rounded-md max-w-md text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-        <p className="text-gray-600">
-          {error === "CredentialsSignin"
-            ? "Invalid email or password. Please try again."
-            : "An unexpected error occurred. Please try again later."}
-        </p>
-        <a href="/auth/signin" className="mt-6 inline-block text-primary hover:underline">
-          Go back to Sign In
-        </a>
-      </div>
+    <div className="container flex h-screen flex-col items-center justify-center">
+      <Alert variant="destructive" className="max-w-md">
+        <AlertTitle>Authentication Error</AlertTitle>
+        <AlertDescription>
+          {error === 'Configuration' && 'Server configuration error'}
+          {error === 'AccessDenied' && 'You do not have permission to sign in'}
+          {error === 'Verification' && 'Token verification failed'}
+          {error === 'OAuthSignin' && 'Error handling OAuth signin'}
+          {error === 'OAuthCallback' && 'Error handling OAuth callback'}
+          {error === 'OAuthCreateAccount' && 'Error creating OAuth account'}
+          {error === 'Default' && 'Unknown authentication error'}
+        </AlertDescription>
+      </Alert>
+
+      <Button asChild className="mt-4">
+        <Link href="/auth/signin">Return to Sign In</Link>
+      </Button>
     </div>
-  );
+  )
 }
+
